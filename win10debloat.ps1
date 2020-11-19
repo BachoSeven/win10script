@@ -2567,7 +2567,7 @@ Function Stop-EdgePDF {
 }
 
 Function CreateRestorePoint {
-  Write-Output "Creating Restore Point incase something bad happens"
+  Write-Output "Creating Restore Point in case something bad happens"
   Enable-ComputerRestore -Drive "C:\"
   Checkpoint-Computer -Description "RestorePoint1" -RestorePointType "MODIFY_SETTINGS"
 }
