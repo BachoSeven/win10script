@@ -5,7 +5,7 @@
 #
 #    Note from author: Never run scripts without reading them & understanding what they do.
 #
-#	Addition: One command to rule them all, One command to find it, and One command to Run it! 
+#	Addition: One command to rule them all, One command to find it, and One command to Run it!
 #
 #     > powershell -nop -c "iex(New-Object Net.WebClient).DownloadString('https://git.io/JTHEM')"
 #
@@ -16,17 +16,18 @@ $tweaks = @(
 	### Require administrator privileges ###
 	"RequireAdmin",
 	"CreateRestorePoint",
-	
+
 	### Chris Luke Tech Additions
 	"TitusRegistryTweaks",
 	"InstallTitusProgs", #REQUIRED FOR OTHER PROGRAM INSTALLS!
+	"InstallAdobe",
 	"Install7Zip",
-	"InstallNotepadplusplus",
+	# "InstallNotepadplusplus",
 	"InstallIrfanview",
 	"InstallVLC",
 	"InstallAdobe",
-	"InstallBrave",
-	#"ChangeDefaultApps",
+	# "InstallBrave",
+	# "ChangeDefaultApps",
 
 	### Windows Apps
 	"DebloatAll",
@@ -44,7 +45,7 @@ $tweaks = @(
 	"DisableFeedback",              # "EnableFeedback",
 	"DisableTailoredExperiences",   # "EnableTailoredExperiences",
 	"DisableAdvertisingID",         # "EnableAdvertisingID",
-	"EnableCortana",
+	"DisableCortana",               # "EnableCortana",
 	"DisableErrorReporting",        # "EnableErrorReporting",
 	"SetP2PUpdateLocal",          # "SetP2PUpdateInternet",
 	"DisableDiagTrack",             # "EnableDiagTrack",
@@ -69,7 +70,7 @@ $tweaks = @(
 	# "EnableCIMemoryIntegrity",    # "DisableCIMemoryIntegrity",
 	#"DisableScriptHost",            # "EnableScriptHost",
 	#"EnableDotNetStrongCrypto",     # "DisableDotNetStrongCrypto",
-	"DisableMeltdownCompatFlag", # "EnableMeltdownCompatFlag"    
+	"DisableMeltdownCompatFlag", # "EnableMeltdownCompatFlag"
 
 	### Service Tweaks ###
 	"DisableUpdateMSRT",          # "EnableUpdateMSRT",
@@ -86,8 +87,8 @@ $tweaks = @(
 	"DisableSuperfetch",          # "EnableSuperfetch",
 	"EnableIndexing",
 	"SetBIOSTimeUTC",             # "SetBIOSTimeLocal",
-	"DisableHibernation",		# "EnableHibernation",          # 
-	"EnableSleepButton",		# "DisableSleepButton",         
+	"DisableHibernation",		# "EnableHibernation",          #
+	"EnableSleepButton",		# "DisableSleepButton",
 	"DisableSleepTimeout",        # "EnableSleepTimeout",
 	# "DisableFastStartup",         # "EnableFastStartup",
 
@@ -100,9 +101,9 @@ $tweaks = @(
 	"DisableStickyKeys",            # "EnableStickyKeys",
 	"ShowTaskManagerDetails"        # "HideTaskManagerDetails",
 	"ShowFileOperationsDetails",    # "HideFileOperationsDetails",
-	"DisableFileDeleteConfirm",	# "EnableFileDeleteConfirm",    
+	"EnableFileDeleteConfirm",	# "DisableFileDeleteConfirm",
 	"HideTaskbarSearch",
-	"ShowTaskbarSearchIcon",      #"ShowTaskbarSearchBox",
+	# "ShowTaskbarSearchIcon",      #"ShowTaskbarSearchBox",
 	"HideTaskView",                 # "ShowTaskView",
 	# "ShowSmallTaskbarIcons",        # "ShowLargeTaskbarIcons",
 	# "SetTaskbarCombineWhenFull",    # "SetTaskbarCombineNever",     # "SetTaskbarCombineAlways",
@@ -143,7 +144,8 @@ $tweaks = @(
 	# "DisableThumbsDB",              # "EnableThumbsDB",
 
 	### Application Tweaks ###
-        # "EnableOneDrive",
+	"DisableOneDrive",              # "EnableOneDrive",
+	"UninstallOneDrive",            # "InstallOneDrive",
 	"UninstallMsftBloat",           # "InstallMsftBloat",
 	"UninstallThirdPartyBloat",     # "InstallThirdPartyBloat",
 	# "UninstallWindowsStore",      # "InstallWindowsStore",
@@ -169,7 +171,7 @@ $tweaks = @(
 	# "EnableAudio",                # "DisableAudio",
 
 	### Unpinning ###
-	#"UnpinStartMenuTiles",
+	"UnpinStartMenuTiles",
 	#"UnpinTaskbarIcons",
 
 	### Auxiliary Functions ###
@@ -184,12 +186,12 @@ function Show-Choco-Menu {
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
         [string]$Title,
-    
+
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
         [string]$ChocoInstall
     )
-   
+
  do
  {
     Clear-Host
@@ -249,7 +251,7 @@ Function InstallBrave {
     $selection = Read-Host "Please make a selection"
     switch ($selection)
     {
-    'y' { 
+    'y' {
 		Invoke-WebRequest -Uri "https://laptop-updates.brave.com/download/CHR253" -OutFile $env:USERPROFILE\Downloads\brave.exe
 		~/Downloads/brave.exe
 	}
@@ -258,7 +260,7 @@ Function InstallBrave {
     }
  }
  until ($selection -match "y" -or $selection -match "n" -or $selection -match "q")
-	
+
 }
 Function Install7Zip {
 	Show-Choco-Menu -Title "Do you want to install 7-Zip?" -ChocoInstall "7zip"
@@ -855,7 +857,7 @@ Function EnableCIMemoryIntegrity {
 	Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity" -Name "Enabled" -Type DWord -Value 1
 }
 
-# Disable Core Isolation Memory Integrity - 
+# Disable Core Isolation Memory Integrity -
 Function DisableCIMemoryIntegrity {
 	Write-Output "Disabling Core Isolation Memory Integrity..."
 	Remove-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity" -Name "Enabled" -ErrorAction SilentlyContinue
@@ -1993,8 +1995,8 @@ Function UninstallMsftBloat {
 	Get-AppxPackage "Microsoft.BingSports" | Remove-AppxPackage
 	Get-AppxPackage "Microsoft.BingTranslator" | Remove-AppxPackage
 	Get-AppxPackage "Microsoft.BingWeather" | Remove-AppxPackage
-	Get-AppxPackage "Microsoft.CommsPhone" | Remove-AppxPackage
-	Get-AppxPackage "Microsoft.ConnectivityStore" | Remove-AppxPackage
+	#Get-AppxPackage "Microsoft.CommsPhone" | Remove-AppxPackage
+	#Get-AppxPackage "Microsoft.ConnectivityStore" | Remove-AppxPackage
 	Get-AppxPackage "Microsoft.GetHelp" | Remove-AppxPackage
 	Get-AppxPackage "Microsoft.Getstarted" | Remove-AppxPackage
 	Get-AppxPackage "Microsoft.Messaging" | Remove-AppxPackage
@@ -2003,7 +2005,7 @@ Function UninstallMsftBloat {
 	Get-AppxPackage "Microsoft.MicrosoftSolitaireCollection" | Remove-AppxPackage
 	Get-AppxPackage "Microsoft.MicrosoftStickyNotes" | Remove-AppxPackage
 	Get-AppxPackage "Microsoft.NetworkSpeedTest" | Remove-AppxPackage
-	Get-AppxPackage "Microsoft.Office.OneNote" | Remove-AppxPackage
+	#Get-AppxPackage "Microsoft.Office.OneNote" | Remove-AppxPackage
 	Get-AppxPackage "Microsoft.Office.Sway" | Remove-AppxPackage
 	Get-AppxPackage "Microsoft.OneConnect" | Remove-AppxPackage
 	Get-AppxPackage "Microsoft.People" | Remove-AppxPackage
@@ -2012,10 +2014,10 @@ Function UninstallMsftBloat {
 	Get-AppxPackage "Microsoft.Wallet" | Remove-AppxPackage
 	Get-AppxPackage "Microsoft.WindowsAlarms" | Remove-AppxPackage
 	Get-AppxPackage "Microsoft.WindowsCamera" | Remove-AppxPackage
-	Get-AppxPackage "microsoft.windowscommunicationsapps" | Remove-AppxPackage
+	#Get-AppxPackage "microsoft.windowscommunicationsapps" | Remove-AppxPackage
 	Get-AppxPackage "Microsoft.WindowsFeedbackHub" | Remove-AppxPackage
 	Get-AppxPackage "Microsoft.WindowsMaps" | Remove-AppxPackage
-	Get-AppxPackage "Microsoft.WindowsPhone" | Remove-AppxPackage
+	#Get-AppxPackage "Microsoft.WindowsPhone" | Remove-AppxPackage
 	Get-AppxPackage "Microsoft.Windows.Photos" | Remove-AppxPackage
 	Get-AppxPackage "Microsoft.WindowsSoundRecorder" | Remove-AppxPackage
 	Get-AppxPackage "Microsoft.ZuneMusic" | Remove-AppxPackage
@@ -2532,35 +2534,35 @@ Function DisableDarkMode {
 ##########
 
 Function Stop-EdgePDF {
-    
-    #Stops edge from taking over as the default .PDF viewer    
+
+    #Stops edge from taking over as the default .PDF viewer
     Write-Output "Stopping Edge from taking over as the default .PDF viewer"
     $NoPDF = "HKCR:\.pdf"
     $NoProgids = "HKCR:\.pdf\OpenWithProgids"
-    $NoWithList = "HKCR:\.pdf\OpenWithList" 
+    $NoWithList = "HKCR:\.pdf\OpenWithList"
     If (!(Get-ItemProperty $NoPDF  NoOpenWith)) {
-        New-ItemProperty $NoPDF NoOpenWith 
-    }        
+        New-ItemProperty $NoPDF NoOpenWith
+    }
     If (!(Get-ItemProperty $NoPDF  NoStaticDefaultVerb)) {
-        New-ItemProperty $NoPDF  NoStaticDefaultVerb 
-    }        
+        New-ItemProperty $NoPDF  NoStaticDefaultVerb
+    }
     If (!(Get-ItemProperty $NoProgids  NoOpenWith)) {
-        New-ItemProperty $NoProgids  NoOpenWith 
-    }        
+        New-ItemProperty $NoProgids  NoOpenWith
+    }
     If (!(Get-ItemProperty $NoProgids  NoStaticDefaultVerb)) {
-        New-ItemProperty $NoProgids  NoStaticDefaultVerb 
-    }        
+        New-ItemProperty $NoProgids  NoStaticDefaultVerb
+    }
     If (!(Get-ItemProperty $NoWithList  NoOpenWith)) {
         New-ItemProperty $NoWithList  NoOpenWith
-    }        
-    If (!(Get-ItemProperty $NoWithList  NoStaticDefaultVerb)) {
-        New-ItemProperty $NoWithList  NoStaticDefaultVerb 
     }
-            
+    If (!(Get-ItemProperty $NoWithList  NoStaticDefaultVerb)) {
+        New-ItemProperty $NoWithList  NoStaticDefaultVerb
+    }
+
     #Appends an underscore '_' to the Registry key for Edge
     $Edge = "HKCR:\AppXd4nrz8ff68srnhf9t5a8sbjyar1cr723_"
     If (Test-Path $Edge) {
-        Set-Item $Edge AppXd4nrz8ff68srnhf9t5a8sbjyar1cr723_ 
+        Set-Item $Edge AppXd4nrz8ff68srnhf9t5a8sbjyar1cr723_
     }
 }
 
@@ -2617,7 +2619,7 @@ Function DebloatAll {
         "*Sway*"
         "*Speed Test*"
         "*Dolby*"
-             
+
         #Optional: Typically not removed but you can if you need to for some reason
         #"*Microsoft.Advertising.Xaml_10.1712.5.0_x64__8wekyb3d8bbwe*"
         #"*Microsoft.Advertising.Xaml_10.1712.5.0_x86__8wekyb3d8bbwe*"
